@@ -1,0 +1,172 @@
+package com.example.bugit.view
+
+import android.net.Uri
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import com.example.bugit.R
+import com.example.bugit.util.Constant
+import com.example.bugit.viewmodel.BugSubmissionViewModel
+
+@Composable
+fun BugSubmissionScreen(paddingModifier: Modifier) {
+
+    val bugSubmissionViewModel: BugSubmissionViewModel = viewModel()
+    val uiState = bugSubmissionViewModel.uiState.collectAsStateWithLifecycle()
+    val bugDescription = remember { mutableStateOf("") }
+    val imageUri = remember {
+        mutableStateOf<Uri?>(null)
+    }
+    val context = LocalContext.current
+
+    // Launch gallery to select the image
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri ->
+            uri?.let {
+                imageUri.value = it
+            }
+        }
+    )
+
+    Box(
+        modifier = paddingModifier
+            .padding(Constant.PADDING_20)
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(Constant.PADDING_10)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Column {
+                showBugImage(imageUri, galleryLauncher) // Image
+                showBugDescription(bugDescription) // Description
+            }
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Button(
+                    onClick = { bugSubmissionViewModel.submitBug(imageUri, context) },
+                    modifier = Modifier.align(Alignment.BottomCenter),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
+                )
+                {
+                    Text(text = Constant.SUBMIT)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun showBugImage(
+    imageUri: MutableState<Uri?>, galleryLauncher: ManagedActivityResultLauncher<String, Uri?>
+) {
+    Text(text = Constant.IMAGE, fontSize = Constant.FONT_20, color = Color.Gray)
+    Card(
+        modifier = Modifier
+            .padding(Constant.PADDING_10)
+            .size(width = Constant.PADDING_200, height = Constant.PADDING_200),
+        elevation = CardDefaults.cardElevation(defaultElevation = Constant.PADDING_10),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White,
+        )
+    ) {
+        Box {
+            if (imageUri.value != null) {
+                AsyncImage(
+                    model = imageUri.value,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(Constant.PADDING_4)
+                        .fillMaxHeight()
+                        .width(Constant.PADDING_200)
+                        .clip(RoundedCornerShape(Constant.PADDING_12)),
+                    contentScale = ContentScale.Crop,
+                    placeholder = painterResource(id = R.drawable.placeholder),
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.placeholder),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(Constant.PADDING_4)
+                        .fillMaxHeight()
+                        .width(Constant.PADDING_200)
+                        .clip(RoundedCornerShape(Constant.PADDING_12)),
+                )
+            }
+            Icon(imageVector = Icons.Rounded.Edit,
+                contentDescription = null,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .clickable {
+                        galleryLauncher.launch(Constant.IMAGE_PREFIX)
+                    })
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun showBugDescription(bugDescription: MutableState<String>) {
+    Text(
+        text = Constant.DESCRIPTION,
+        fontSize = Constant.FONT_20,
+        color = Color.Gray,
+        modifier = Modifier.padding(top = Constant.PADDING_20)
+    )
+    Card(
+        modifier = Modifier
+            .padding(Constant.PADDING_10),
+        elevation = CardDefaults.cardElevation(defaultElevation = Constant.PADDING_10),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White,
+        )
+    ) {
+        TextField(
+            value = bugDescription.value,
+            onValueChange = { bugDescription.value = it },
+            modifier = Modifier
+                .padding(Constant.PADDING_16),
+        )
+    }
+}

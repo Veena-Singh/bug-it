@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "223433414196",
+    "project_id": "bug-it-a6305",
+    "storage_bucket": "bug-it-a6305.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:223433414196:android:aee0dafe80593522215c61",
+        "android_client_info": {
+          "package_name": "com.example.bugit"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYh5s5pgtU-3Wx1731Tqqci9A4i5njpUU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
