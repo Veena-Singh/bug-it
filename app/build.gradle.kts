@@ -46,6 +46,7 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/DEPENDENCIES"
         }
     }
 }
@@ -62,18 +63,22 @@ dependencies {
     implementation("androidx.compose.material3:material3")
 
     // Bottom Navigation
-
-//    implementation("androidx.compose.material.BottomNavigation")
-//    implementation("androidx.compose.material.BottomNavigationItem")
     implementation("androidx.navigation:navigation-compose:2.8.2")
     implementation("androidx.compose.material:material:1.7.3")
+    // Coil lib for Image loading
     implementation("io.coil-kt:coil-compose:2.4.0")
+    // Firebase
     implementation("com.google.firebase:firebase-storage:21.0.1")
+    // Retrofit Api calling
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
-
-
+    // Google
+    implementation("com.google.api-client:google-api-client-android:1.32.1")
+    implementation("com.google.apis:google-api-services-sheets:v4-rev581-1.25.0")
+    implementation("com.google.oauth-client:google-oauth-client-jetty:1.32.1")
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
+    implementation("com.google.http-client:google-http-client-gson:1.41.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")

@@ -20,6 +20,7 @@ object Constant {
     const val IMAGE_PREFIX = "image/*"
 
     //View Paddings
+    val PADDING_1 = 1.dp
     val PADDING_4 = 4.dp
     val PADDING_10 = 10.dp
     val PADDING_12 = 12.dp

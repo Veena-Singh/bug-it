@@ -1,9 +1,11 @@
 package com.example.bugit.view
 
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -41,6 +44,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.bugit.R
+import com.example.bugit.uistate.BugSubmissionScreenUiState
 import com.example.bugit.util.Constant
 import com.example.bugit.viewmodel.BugSubmissionViewModel
 
@@ -54,6 +58,7 @@ fun BugSubmissionScreen(paddingModifier: Modifier) {
         mutableStateOf<Uri?>(null)
     }
     val context = LocalContext.current
+    val tag = "BugSubmissionScreen"
 
     // Launch gallery to select the image
     val galleryLauncher = rememberLauncherForActivityResult(
@@ -64,6 +69,16 @@ fun BugSubmissionScreen(paddingModifier: Modifier) {
             }
         }
     )
+
+    val requestPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            bugSubmissionViewModel.submitBug(imageUri.value, bugDescription.value, context)
+        } else {
+            Log.d(tag, "Read Permission not granted")
+        }
+    }
 
     Box(
         modifier = paddingModifier
@@ -79,12 +94,14 @@ fun BugSubmissionScreen(paddingModifier: Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Column {
-                showBugImage(imageUri, galleryLauncher) // Image
-                showBugDescription(bugDescription) // Description
+                showBugImage(imageUri, galleryLauncher, uiState, bugSubmissionViewModel) // Image
+                showBugDescription(bugDescription, uiState, bugSubmissionViewModel) // Description
             }
             Box(modifier = Modifier.fillMaxWidth()) {
                 Button(
-                    onClick = { bugSubmissionViewModel.submitBug(imageUri, context) },
+                    onClick = {
+                        requestPermissionLauncher.launch(android.Manifest.permission.READ_CONTACTS)
+                    },
                     modifier = Modifier.align(Alignment.BottomCenter),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
                 )
@@ -98,7 +115,10 @@ fun BugSubmissionScreen(paddingModifier: Modifier) {
 
 @Composable
 fun showBugImage(
-    imageUri: MutableState<Uri?>, galleryLauncher: ManagedActivityResultLauncher<String, Uri?>
+    imageUri: MutableState<Uri?>,
+    galleryLauncher: ManagedActivityResultLauncher<String, Uri?>,
+    uiState: State<BugSubmissionScreenUiState>,
+    bugSubmissionViewModel: BugSubmissionViewModel
 ) {
     Text(text = Constant.IMAGE, fontSize = Constant.FONT_20, color = Color.Gray)
     Card(
@@ -108,10 +128,17 @@ fun showBugImage(
         elevation = CardDefaults.cardElevation(defaultElevation = Constant.PADDING_10),
         colors = CardDefaults.cardColors(
             containerColor = Color.White,
+        ),
+        border = BorderStroke(
+            Constant.PADDING_1,
+            if (uiState.value.showImageFieldError) Color.Red else Color.Transparent
         )
     ) {
         Box {
             if (imageUri.value != null) {
+                if (uiState.value.showImageFieldError) {
+                    bugSubmissionViewModel.showImageFieldError(imageUri.value)
+                }
                 AsyncImage(
                     model = imageUri.value,
                     contentDescription = null,
@@ -147,7 +174,11 @@ fun showBugImage(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun showBugDescription(bugDescription: MutableState<String>) {
+fun showBugDescription(
+    bugDescription: MutableState<String>,
+    uiState: State<BugSubmissionScreenUiState>,
+    bugSubmissionViewModel: BugSubmissionViewModel
+) {
     Text(
         text = Constant.DESCRIPTION,
         fontSize = Constant.FONT_20,
@@ -156,15 +187,25 @@ fun showBugDescription(bugDescription: MutableState<String>) {
     )
     Card(
         modifier = Modifier
-            .padding(Constant.PADDING_10),
+            .padding(Constant.PADDING_10)
+            .fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = Constant.PADDING_10),
         colors = CardDefaults.cardColors(
             containerColor = Color.White,
+        ),
+        border = BorderStroke(
+            Constant.PADDING_1,
+            if (uiState.value.showDescriptionFieldError) Color.Red else Color.Transparent
         )
     ) {
         TextField(
             value = bugDescription.value,
-            onValueChange = { bugDescription.value = it },
+            onValueChange = { description ->
+                bugDescription.value = description
+                if (uiState.value.showDescriptionFieldError) {
+                    bugSubmissionViewModel.showBugDescriptionFieldError(bugDescription = bugDescription.value)
+                }
+            },
             modifier = Modifier
                 .padding(Constant.PADDING_16),
         )
