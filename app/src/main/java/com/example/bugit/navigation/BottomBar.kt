@@ -18,13 +18,13 @@ sealed class BottomBar(
         icon = Icons.Rounded.Home
     )
 
-    object Tasks : BottomBar(
+    object BugSubmission : BottomBar(
         route = Constant.SUBMIT_BUG_ROUTE,
         label = Constant.SUBMIT_BUG_LABEL,
         icon = Icons.Rounded.CheckCircle
     )
 
-    object Options : BottomBar(
+    object BugsList : BottomBar(
         route = Constant.BUG_LIST_ROUTE,
         label = Constant.BUG_LIST_LABEL,
         icon = Icons.Rounded.Settings

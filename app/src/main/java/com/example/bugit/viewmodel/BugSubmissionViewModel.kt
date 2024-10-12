@@ -1,18 +1,18 @@
 package com.example.bugit.viewmodel
 
-import android.accounts.AccountManager
 import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.bugit.R
+import com.example.bugit.repo.GoogleSheetService
 import com.example.bugit.uistate.BugSubmissionScreenUiState
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
-import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.sheets.v4.Sheets
-import com.google.api.services.sheets.v4.SheetsScopes
+import com.google.api.services.sheets.v4.model.AddSheetRequest
+import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest
+import com.google.api.services.sheets.v4.model.Request
+import com.google.api.services.sheets.v4.model.SheetProperties
+import com.google.api.services.sheets.v4.model.Spreadsheet
 import com.google.api.services.sheets.v4.model.ValueRange
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
@@ -21,8 +21,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.io.InputStream
-import java.io.InputStreamReader
+import java.text.DateFormat
+import java.util.Collections
+import java.util.Date
+import java.util.Locale
 import java.util.UUID
 
 class BugSubmissionViewModel: ViewModel()  {
@@ -48,17 +50,19 @@ class BugSubmissionViewModel: ViewModel()  {
             imageUri.let {
                 storageReference.putFile(it)
                     .addOnSuccessListener {
-                        handleLoading(false)
                         storageReference.downloadUrl.addOnSuccessListener { uri ->
                             val bugImageUrl = uri.toString()
                             Log.d(TAG, "Bug Image URL: $bugImageUrl")
                             saveToGoogleSheet(context, bugImageUrl, bugDescription) // Storing image url and description
                         }.addOnFailureListener { exception ->
+                            handleLoading(false)
+                            handleDialog(showSuccessDialog = false, showFailureDialog = true)
                             Log.e(TAG, "Error getting Bug Image URL", exception)
                         }
                     }
                     .addOnFailureListener {
                         handleLoading(false)
+                        handleDialog(showSuccessDialog = false, showFailureDialog = true)
                     }
             }
         }
@@ -88,29 +92,13 @@ class BugSubmissionViewModel: ViewModel()  {
         }
     }
 
-    private fun getSheetsService(context: Context): Sheets {
-        val httpTransport = com.google.api.client.http.javanet.NetHttpTransport()
-        val jsonFactory = JacksonFactory.getDefaultInstance()
-        val inputStream: InputStream = context.resources.openRawResource(R.raw.credentials)
-        // Load credentials from a file or environment variable
-        val clientSecrets = GoogleClientSecrets.load(JacksonFactory.getDefaultInstance(), InputStreamReader(inputStream))
-        val credential = GoogleAccountCredential.usingOAuth2(
-            context, listOf(SheetsScopes.SPREADSHEETS)
-        )
-
-        credential.selectedAccountName = clientSecrets.installed.clientId
-
-        val accountName = credential.newChooseAccountIntent().getStringExtra(AccountManager.KEY_ACCOUNT_NAME)
-
-        if (!accountName.isNullOrEmpty()) {
-            credential.selectedAccountName = accountName
-        } else {
-            credential.selectedAccountName = "veenasinghits@gmail.com"
+     fun handleDialog(showSuccessDialog: Boolean = false, showFailureDialog: Boolean = false) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                showFailureDialog = showFailureDialog,
+                showSuccessDialog = showSuccessDialog
+            )
         }
-
-        return Sheets.Builder(httpTransport, jsonFactory, credential)
-            .setApplicationName(applicationName)
-            .build()
     }
 
     // Save image url and bug description on google sheet
@@ -119,21 +107,62 @@ class BugSubmissionViewModel: ViewModel()  {
             val values = listOf(
                 listOf(bugDescription, bugImageUrl)
             )
-            val sheetsService = getSheetsService(context)
+            val sheetsService = GoogleSheetService.getSheetsService(context)
             val body = ValueRange().setValues(values)
+            val currentDate = getCurrentDate()
+            if (isSheetExists(sheetsService, currentDate).not()) {
+                val addSheetRequest =
+                    AddSheetRequest().setProperties(SheetProperties().setTitle(currentDate))
+                val batchUpdateRequest = BatchUpdateSpreadsheetRequest()
+                    .setRequests(Collections.singletonList(Request().setAddSheet(addSheetRequest)))
+                sheetsService.spreadsheets().batchUpdate(GoogleSheetService.googleSheetId, batchUpdateRequest)
+                    .execute()
+            }
             val result = sheetsService.spreadsheets().values()
-                .append(spreadsheetId, range, body)
+                .append(GoogleSheetService.googleSheetId, currentDate + range, body)
                 .setValueInputOption(valueInputOption)
                 .execute()
             Log.d(TAG, result.toString())
+            if (result?.updates != null) {
+                handleLoading(false)
+                handleDialog(showSuccessDialog = true, showFailureDialog = false)
+            } else {
+                handleLoading(false)
+                handleDialog(showSuccessDialog = false, showFailureDialog = true)
+            }
+        }
+    }
+
+    private fun isSheetExists(service: Sheets, sheetName: String): Boolean {
+        val spreadsheet: Spreadsheet = service.spreadsheets().get(GoogleSheetService.googleSheetId).execute()
+        val sheets = spreadsheet.sheets
+        for (sheet in sheets) {
+            if (sheet.properties.title == sheetName) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun getCurrentDate(): String {
+        val dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault())
+        val date = Date()
+        return dateFormat.format(date).formatDate()
+    }
+
+    private fun String.formatDate(): String {
+        val parts = this.split("/")
+        return if (parts.size == 3) {
+            val (day, month, year) = parts
+            "$day-$month-$year"
+        } else {
+            this // Return the original string if it doesn't match the expected format
         }
     }
 
     companion object {
         const val TAG = "BugSubmissionViewModel"
-        const val spreadsheetId = "1KaQkJ0KhXRza6bErF-yqW4qknddyDfwM-9D_EVC2tMI"
-        const val range = "Sheet1!A1"
+        const val range = "!A1"
         const val valueInputOption = "RAW"
-        const val applicationName = "Bug It"
     }
 }

@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Edit
@@ -25,6 +26,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -42,14 +44,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.bugit.R
+import com.example.bugit.navigation.BottomBar
 import com.example.bugit.uistate.BugSubmissionScreenUiState
 import com.example.bugit.util.Constant
 import com.example.bugit.viewmodel.BugSubmissionViewModel
 
 @Composable
-fun BugSubmissionScreen(paddingModifier: Modifier) {
+fun BugSubmissionScreen(
+    paddingModifier: Modifier,
+    navController: NavHostController,
+    image: String?
+) {
 
     val bugSubmissionViewModel: BugSubmissionViewModel = viewModel()
     val uiState = bugSubmissionViewModel.uiState.collectAsStateWithLifecycle()
@@ -59,6 +67,11 @@ fun BugSubmissionScreen(paddingModifier: Modifier) {
     }
     val context = LocalContext.current
     val tag = "BugSubmissionScreen"
+
+    if (image != null) {
+        val uri = Uri.parse(Uri.decode(image))
+        imageUri.value = uri
+    }
 
     // Launch gallery to select the image
     val galleryLauncher = rememberLauncherForActivityResult(
@@ -97,7 +110,11 @@ fun BugSubmissionScreen(paddingModifier: Modifier) {
                 showBugImage(imageUri, galleryLauncher, uiState, bugSubmissionViewModel) // Image
                 showBugDescription(bugDescription, uiState, bugSubmissionViewModel) // Description
             }
-            Box(modifier = Modifier.fillMaxWidth()) {
+            Box(modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center) {
+                if(uiState.value.loading) {
+                    CircularProgressIndicator()
+                }
                 Button(
                     onClick = {
                         requestPermissionLauncher.launch(android.Manifest.permission.READ_CONTACTS)
@@ -110,6 +127,25 @@ fun BugSubmissionScreen(paddingModifier: Modifier) {
                 }
             }
         }
+        if (uiState.value.showSuccessDialog || uiState.value.showFailureDialog) {
+            val title = if (uiState.value.showFailureDialog) "Something went wrong!" else "Great!"
+            val message = if (uiState.value.showFailureDialog) "Please retry, Bug has not submitted." else "Bug has successfully submitted."
+            AlertDialog(
+                    onDismissRequest = { bugSubmissionViewModel.handleDialog()
+                    },
+                    title = { Text(text = title) },
+                    text = { Text(text = message) },
+                    confirmButton = {
+                        Button(onClick = {
+                            bugSubmissionViewModel.handleDialog()
+                            if (uiState.value.showSuccessDialog ) {
+                                navController.navigate(BottomBar.BugsList.route)
+                            }
+                        }) {
+                            Text("OK")
+                        }
+                    })
+            }
     }
 }
 
