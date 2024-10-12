@@ -17,10 +17,10 @@ import com.example.bugit.view.MainScreen
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-    var imageUri: Uri? = null
+        var imageUri: Uri? = null
         intent?.let {
             if (it.action == Intent.ACTION_SEND && it.type?.startsWith("image/") == true) {
-                imageUri = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                imageUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                     intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
                 else
                     intent.getParcelableExtra(Intent.EXTRA_STREAM)

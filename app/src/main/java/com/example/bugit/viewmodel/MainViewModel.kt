@@ -12,7 +12,7 @@ open class MainViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(MainUiState())
     val mainUiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
-    fun setImageUri(uri: String?) {
+    fun setImageUri(uri: String) {
         _uiState.update { currentState ->
             currentState.copy(
                 imageUri = uri

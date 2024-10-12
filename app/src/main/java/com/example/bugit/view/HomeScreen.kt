@@ -18,13 +18,9 @@ import com.example.bugit.viewmodel.MainViewModel
 fun HomeScreen(paddingModifier: Modifier, navController: NavHostController, viewModel: MainViewModel) {
     val uiState = viewModel.mainUiState.collectAsStateWithLifecycle()
 
-    if (uiState.value.imageUri != null) {
-        navController.navigate("${BottomBar.BugSubmission.route}/${uiState.value.imageUri}")
-    }
-
-    LaunchedEffect(Unit) {
-        if (uiState.value.imageUri != null) {
-            viewModel.setImageUri(null)
+    LaunchedEffect(uiState.value.imageUri) {
+        if (uiState.value.imageUri != "null") {
+            navController.navigate("${BottomBar.BugSubmission.route}/${uiState.value.imageUri}")
         }
     }
 

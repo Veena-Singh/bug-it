@@ -31,6 +31,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -56,7 +57,7 @@ import com.example.bugit.viewmodel.BugSubmissionViewModel
 fun BugSubmissionScreen(
     paddingModifier: Modifier,
     navController: NavHostController,
-    image: String?
+    image: String
 ) {
 
     val bugSubmissionViewModel: BugSubmissionViewModel = viewModel()
@@ -68,9 +69,11 @@ fun BugSubmissionScreen(
     val context = LocalContext.current
     val tag = "BugSubmissionScreen"
 
-    if (image != null) {
-        val uri = Uri.parse(Uri.decode(image))
-        imageUri.value = uri
+    LaunchedEffect(image) {
+        if (image != "null ") {
+            val uri = Uri.parse(Uri.decode(image))
+            imageUri.value = uri
+        }
     }
 
     // Launch gallery to select the image

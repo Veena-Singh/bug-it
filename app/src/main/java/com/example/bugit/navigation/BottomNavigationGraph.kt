@@ -31,7 +31,7 @@ fun BottomNavigationGraph(
         ) {
                 backStackEntry ->
             val imageUri = backStackEntry.arguments?.getString("imageUri")
-            BugSubmissionScreen(paddingModifier, navController, imageUri)
+            BugSubmissionScreen(paddingModifier, navController, imageUri.toString())
         }
         composable(route= BottomBar.BugsList.route) {
             BugsListScreen(paddingModifier)
