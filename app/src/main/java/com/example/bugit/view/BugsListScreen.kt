@@ -48,16 +48,6 @@ fun BugsListScreen(paddingModifier: Modifier, navController: NavHostController) 
         bugListViewModel.getAllBugList(context)
     }
 
-    val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
-
-    BackHandler {
-        if (navController.currentBackStackEntry?.destination?.route != Constant.HOME_ROUTE) {
-            navController.popBackStack()
-        } else {
-            backDispatcher?.onBackPressed()
-        }
-    }
-
     Box(modifier = Modifier.fillMaxSize()) {
         if (uiState.value.loading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))

@@ -25,8 +25,7 @@ fun BottomNavigationGraph(
         composable(route= BottomBar.Home.route) {
             HomeScreen(paddingModifier, navController, mainViewModel)
         }
-        composable(route= BottomBar.BugSubmission.route+"/{imageUri}",
-                arguments = listOf(navArgument("imageUri") { type = NavType.StringType })
+        composable(route= BottomBar.BugSubmission.route
         ) {
                 backStackEntry ->
             val imageUri = backStackEntry.arguments?.getString("imageUri")

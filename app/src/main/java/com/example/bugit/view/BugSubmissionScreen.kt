@@ -74,18 +74,8 @@ fun BugSubmissionScreen(
     val context = LocalContext.current
     val tag = "BugSubmissionScreen"
 
-    val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
-
-    BackHandler {
-        if (navController.currentBackStackEntry?.destination?.route != Constant.HOME_ROUTE) {
-            navController.popBackStack()
-        } else {
-            backDispatcher?.onBackPressed()
-        }
-    }
-
     LaunchedEffect(bugImage) {
-        if (bugImage != Constant.NULL_WITH_SPACE) {
+        if (bugImage != Constant.NULL) {
             val uri = Uri.parse(Uri.decode(bugImage))
             imageUri.value = uri
         }

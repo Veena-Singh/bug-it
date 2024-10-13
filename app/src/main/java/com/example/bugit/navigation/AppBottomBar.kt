@@ -50,16 +50,29 @@ fun AppBottomBar(
                 },
                 label = { Text(screen.label) },
                 onClick = {
-                    if (route == HOME_ROUTE) {
-                        mainViewModel.setImageUri(NULL)
-                    }
-                    if (route == SUBMIT_BUG_ROUTE_PARAMS) {
-                        val param = NULL
-                        route = "${BottomBar.BugSubmission.route}/${param} "
-                    }
-                    navController.navigate(route) {
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
+                    when (screen.route) {
+                         BottomBar.BugSubmission.route -> {
+                            navController.navigate(BottomBar.BugSubmission.createRoute(imageUri = NULL))
+                            {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+                        else  -> {
+                            if (route == HOME_ROUTE) {
+                                mainViewModel.setImageUri(NULL)
+                            }
+                            navController.navigate(route)
+                            {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                         }
                     }
                 },

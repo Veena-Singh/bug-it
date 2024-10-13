@@ -2,6 +2,7 @@ package com.example.bugit.navigation
 
 import com.example.bugit.R
 import com.example.bugit.util.Constant
+import com.example.bugit.util.Constant.SUBMIT_BUG_ROUTE
 
 sealed class BottomBar(
     val route: String,
@@ -16,10 +17,12 @@ sealed class BottomBar(
     )
 
     object BugSubmission : BottomBar(
-        route = Constant.SUBMIT_BUG_ROUTE,
+        route = Constant.SUBMIT_BUG_ROUTE_PARAMS,
         label = Constant.SUBMIT_BUG_LABEL,
         icon = R.drawable.bug
-    )
+    ) {
+        fun createRoute(imageUri: String) = "$SUBMIT_BUG_ROUTE/$imageUri"
+    }
 
     object BugsList : BottomBar(
         route = Constant.BUG_LIST_ROUTE,

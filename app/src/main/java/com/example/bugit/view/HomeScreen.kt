@@ -24,6 +24,7 @@ import androidx.navigation.NavHostController
 import com.example.bugit.R
 import com.example.bugit.navigation.BottomBar
 import com.example.bugit.util.Constant
+import com.example.bugit.util.Constant.NULL
 import com.example.bugit.viewmodel.MainViewModel
 
 @Composable
@@ -35,9 +36,15 @@ fun HomeScreen(
     val uiState = viewModel.mainUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(uiState.value.imageUri) {
-        if (uiState.value.imageUri != Constant.NULL) {
-            navController.navigate("${BottomBar.BugSubmission.route}/${uiState.value.imageUri}")
-            viewModel.setImageUri(Constant.NULL)
+        if (uiState.value.imageUri != NULL) {
+            navController.navigate(BottomBar.BugSubmission.createRoute(imageUri = uiState.value.imageUri)) {
+                popUpTo(navController.graph.startDestinationId) {
+                    saveState = true
+                }
+                launchSingleTop = true
+                restoreState = true
+            }
+            viewModel.setImageUri(NULL)
         }
     }
 
@@ -86,7 +93,13 @@ fun HomeScreen(
             )
             Button(
                 onClick = {
-                    navController.navigate("${BottomBar.BugSubmission.route}/${Constant.NULL_WITH_SPACE}")
+                    navController.navigate(BottomBar.BugSubmission.createRoute(imageUri = NULL)){
+                        popUpTo(navController.graph.startDestinationId) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Blue),
                 modifier = Modifier.padding(top = Constant.PADDING_10)
