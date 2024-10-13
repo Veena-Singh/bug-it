@@ -1,6 +1,5 @@
 package com.example.bugit.view
 
-import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,10 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.bugit.navigation.AppBottomBar
 import com.example.bugit.navigation.BottomNavigationGraph
 import com.example.bugit.util.Constant
+import com.example.bugit.util.Constant.NULL
 import com.example.bugit.viewmodel.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -26,49 +27,45 @@ import com.example.bugit.viewmodel.MainViewModel
 fun MainScreen(imageUri: String) {
     val navController = rememberNavController()
     val appBarTitle = remember {
-        mutableStateOf(Constant.HOME_LABEL)
+        mutableStateOf(Constant.SUBMIT_BUG_LABEL)
     }
     val mainViewModel: MainViewModel = viewModel()
+    val currentScreen = navController.currentBackStackEntryAsState()
+
+    LaunchedEffect(currentScreen.value?.destination?.route) {
+        appBarTitle.value = when (currentScreen.value?.destination?.route) {
+            Constant.SUBMIT_BUG_ROUTE_PARAMS -> Constant.SUBMIT_BUG_LABEL
+            Constant.BUG_LIST_ROUTE -> Constant.BUG_LIST_LABEL
+            else -> Constant.HOME_LABEL
+        }
+    }
 
     LaunchedEffect(Unit) {
-        if (imageUri != "null") {
-            mainViewModel.setImageUri(imageUri.toString())
+        if (imageUri != NULL) {
+            mainViewModel.setImageUri(imageUri)
         }
     }
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = appBarTitle.value,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = Constant.FONT_20,
+            if (currentScreen.value?.destination?.route != Constant.HOME_ROUTE) {
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            text = appBarTitle.value,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = Constant.FONT_20,
+                        )
+                    }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = Color.Blue
                     )
-                }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = Color.Blue
                 )
-            )
+            }
         },
         bottomBar = {
-            AppBottomBar(mainViewModel, navController = navController,
-//                onNavigateToDestination = {
-//                    appBarTitle.value = when (it) {
-//                        Constant.HOME_ROUTE -> Constant.HOME_LABEL
-//                        Constant.SUBMIT_BUG_ROUTE -> Constant.SUBMIT_BUG_LABEL
-//                        else -> {
-//                            Constant.BUG_LIST_LABEL
-//                        }
-//                    }
-//                    navController.navigate(it) {
-//                        popUpTo(navController.graph.findStartDestination().id) {
-//                            saveState = true
-//                        }
-//                        restoreState = true
-//                        launchSingleTop = true
-//                    }
-//                }
+            AppBottomBar(
+                mainViewModel, navController = navController
             )
         },
     )

@@ -12,6 +12,7 @@ open class MainViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(MainUiState())
     val mainUiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
+    // Handle the state of bug image when sharing from gallery and launching BugSubmissionScreen
     fun setImageUri(uri: String) {
         _uiState.update { currentState ->
             currentState.copy(

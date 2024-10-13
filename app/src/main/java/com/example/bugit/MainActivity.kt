@@ -4,9 +4,11 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,6 +19,7 @@ import com.example.bugit.view.MainScreen
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Get the image from intent
         var imageUri: Uri? = null
         intent?.let {
             if (it.action == Intent.ACTION_SEND && it.type?.startsWith("image/") == true) {
@@ -28,13 +31,16 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-//            BugItTheme {
-//                // A surface container using the 'background' color from the theme
-//                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-            MainScreen(Uri.encode(imageUri.toString())
-            )
-//                }
-//            }
+            BugItTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    MainScreen(
+                        Uri.encode(imageUri.toString())
+                    )
+                }
+            }
         }
     }
 }

@@ -27,7 +27,7 @@ import java.util.Date
 import java.util.Locale
 import java.util.UUID
 
-class BugSubmissionViewModel: ViewModel()  {
+class BugSubmissionViewModel: MainViewModel()  {
 
     private val _uiState = MutableStateFlow(BugSubmissionScreenUiState())
     val uiState: StateFlow<BugSubmissionScreenUiState> = _uiState.asStateFlow()
@@ -68,6 +68,7 @@ class BugSubmissionViewModel: ViewModel()  {
         }
     }
 
+    // If image not provided for bug creation show error
      fun showImageFieldError(imageUri: Uri?) {
         _uiState.update { currentState ->
             currentState.copy(
@@ -76,6 +77,7 @@ class BugSubmissionViewModel: ViewModel()  {
         }
     }
 
+    // If description not provided for bug creation show error
     fun showBugDescriptionFieldError(bugDescription: String) {
         _uiState.update { currentState ->
             currentState.copy(
@@ -84,6 +86,7 @@ class BugSubmissionViewModel: ViewModel()  {
         }
     }
 
+    // While submitting bug/ network call show loading on screen
     private fun handleLoading(isLoading: Boolean) {
         _uiState.update { currentState ->
             currentState.copy(
@@ -92,6 +95,7 @@ class BugSubmissionViewModel: ViewModel()  {
         }
     }
 
+    // After network call show success or error dialog
      fun handleDialog(showSuccessDialog: Boolean = false, showFailureDialog: Boolean = false) {
         _uiState.update { currentState ->
             currentState.copy(

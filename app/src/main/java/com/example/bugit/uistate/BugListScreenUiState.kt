@@ -4,5 +4,5 @@ import com.example.bugit.model.GoogleSheetData
 
 data class BugListScreenUiState (
     val loading: Boolean = false,
-    val bugList: List<GoogleSheetData> = listOf()
+    val bugList: List<GoogleSheetData> = listOf(),
 )

@@ -23,17 +23,21 @@ class BugListViewModel: ViewModel()  {
     fun getAllBugList(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
             handleLoading(true)
-            val sheetNames = getSheetNames(context)
-            val listOfBugs = mutableListOf<GoogleSheetData>()
-            sheetNames.forEach { sheetName ->
-                val sheetData =  getSheetData(sheetName, context)
-                listOfBugs.add(sheetData)
-            }
-            _uiState.update { currentState ->
-                currentState.copy(
-                    bugList = listOfBugs,
-                    loading = false
-                )
+            try {
+                val sheetNames = getSheetNames(context)
+                val listOfBugs = mutableListOf<GoogleSheetData>()
+                sheetNames.forEach { sheetName ->
+                    val sheetData = getSheetData(sheetName, context)
+                    listOfBugs.add(sheetData)
+                }
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        bugList = listOfBugs,
+                        loading = false
+                    )
+                }
+            } catch (error: Exception) {
+                handleLoading(isLoading = false)
             }
         }
     }
@@ -46,11 +50,13 @@ class BugListViewModel: ViewModel()  {
         }
     }
 
+    // Get all created tabs/sheet names
     private fun getSheetNames(context: Context): List<String> {
         val spreadsheet: Spreadsheet = GoogleSheetService.getSheetsService(context).spreadsheets().get(GoogleSheetService.googleSheetId).execute()
         return spreadsheet.sheets.map { it.properties.title }
     }
 
+    // Get all list of bugs
     private fun getSheetData(sheetName: String, context: Context): GoogleSheetData {
         val response: ValueRange = GoogleSheetService.getSheetsService(context).spreadsheets().values().get(GoogleSheetService.googleSheetId, sheetName).execute()
         val data = response.getValues() ?: listOf()

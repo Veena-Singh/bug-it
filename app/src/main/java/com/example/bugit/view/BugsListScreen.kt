@@ -1,5 +1,7 @@
 package com.example.bugit.view
 
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -27,15 +29,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.bugit.R
+import com.example.bugit.util.Constant
 import com.example.bugit.viewmodel.BugListViewModel
 
 @Composable
-fun BugsListScreen(paddingModifier: Modifier) {
+fun BugsListScreen(paddingModifier: Modifier, navController: NavHostController) {
 
     val bugListViewModel: BugListViewModel = viewModel()
     val uiState = bugListViewModel.uiState.collectAsStateWithLifecycle()
@@ -45,17 +48,27 @@ fun BugsListScreen(paddingModifier: Modifier) {
         bugListViewModel.getAllBugList(context)
     }
 
+    val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+
+    BackHandler {
+        if (navController.currentBackStackEntry?.destination?.route != Constant.HOME_ROUTE) {
+            navController.popBackStack()
+        } else {
+            backDispatcher?.onBackPressed()
+        }
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         if (uiState.value.loading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         } else {
             LazyColumn(
                 modifier = paddingModifier.fillMaxWidth(),
-                contentPadding = PaddingValues(16.dp)
+                contentPadding = PaddingValues(Constant.PADDING_16)
             ) {
                 items(uiState.value.bugList) { item ->
                     val sheetName = item.sheetName
-                    item.data.forEach {
+                    item.sheetData.forEach {
                         BugCard(
                             description = it[0].toString(),
                             date = sheetName,
@@ -72,11 +85,11 @@ fun BugsListScreen(paddingModifier: Modifier) {
 fun BugCard(description: String, date: String, image: String) {
     Card(
         modifier = Modifier
-            .padding(10.dp)
+            .padding(Constant.PADDING_10)
             .fillMaxWidth()
             .wrapContentHeight(),
         shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = Constant.PADDING_4),
         colors = CardDefaults.cardColors(
             containerColor = Color.White,
         ),
@@ -88,22 +101,27 @@ fun BugCard(description: String, date: String, image: String) {
                 model = image,
                 contentDescription = null,
                 modifier = Modifier
-                    .size(130.dp)
-                    .padding(8.dp),
-                contentScale = ContentScale.Fit ,
+                    .size(Constant.PADDING_130)
+                    .padding(Constant.PADDING_8),
+                contentScale = ContentScale.Fit,
                 placeholder = painterResource(id = R.drawable.placeholder),
             )
-            Column(Modifier.padding(8.dp)) {
+            Column(Modifier.padding(Constant.PADDING_8)) {
                 Text(
-                    text = "DESCRIPTION:",
+                    text = Constant.LIST_TITLE_DESCRIPTION,
                     style = TextStyle(fontWeight = FontWeight.Bold)
                 )
                 Text(
                     text = description,
                 )
-                Divider(modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
+                Divider(
+                    modifier = Modifier.padding(
+                        top = Constant.PADDING_10,
+                        bottom = Constant.PADDING_10
+                    )
+                )
                 Text(
-                    text = "Submission Date:",
+                    text = Constant.LIST_TITLE_DATE,
                     style = TextStyle(fontWeight = FontWeight.Bold)
                 )
                 Text(

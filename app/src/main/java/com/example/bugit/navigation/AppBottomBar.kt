@@ -1,23 +1,30 @@
 package com.example.bugit.navigation
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.bugit.util.Constant
 import com.example.bugit.util.Constant.HOME_ROUTE
+import com.example.bugit.util.Constant.NULL
 import com.example.bugit.util.Constant.SUBMIT_BUG_ROUTE
+import com.example.bugit.util.Constant.SUBMIT_BUG_ROUTE_PARAMS
 import com.example.bugit.viewmodel.MainViewModel
 
 @Composable
 fun AppBottomBar(
     mainViewModel: MainViewModel,
     navController: NavHostController,
-//    onNavigateToDestination: (route: String) -> Unit
 ) {
     val screens = listOf(
         BottomBar.Home,
@@ -26,20 +33,28 @@ fun AppBottomBar(
     )
     BottomNavigation() {
         val currentRoute = currentRoute(navController)
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentDestination = navBackStackEntry?.destination
         screens.forEach { screen ->
+            var route = screen.route
+            if (route == SUBMIT_BUG_ROUTE) {
+                route = SUBMIT_BUG_ROUTE_PARAMS
+            }
             BottomNavigationItem(
-                icon = { Icon(imageVector = screen.icon, contentDescription = null) },
-                label = { screen.label },
+                icon = {
+                    Image(
+                        painter = painterResource(id = screen.icon), contentDescription = null,
+                        modifier = Modifier.size(Constant.PADDING_20),
+                        colorFilter = if (currentRoute == route) ColorFilter.tint(Color.White) else ColorFilter.tint(
+                            Color.LightGray
+                        )
+                    )
+                },
+                label = { Text(screen.label) },
                 onClick = {
-//                    onNavigateToDestination(screen.route)
-                    var route = screen.route
                     if (route == HOME_ROUTE) {
-                        mainViewModel.setImageUri("null")
+                        mainViewModel.setImageUri(NULL)
                     }
-                    if (route == SUBMIT_BUG_ROUTE) {
-                        val param = "null"
+                    if (route == SUBMIT_BUG_ROUTE_PARAMS) {
+                        val param = NULL
                         route = "${BottomBar.BugSubmission.route}/${param} "
                     }
                     navController.navigate(route) {
@@ -48,13 +63,8 @@ fun AppBottomBar(
                         }
                     }
                 },
-                selected = currentDestination?.hierarchy?.any {
-                    it.hasRoute(
-                        screen.route,
-                        null
-                    )
-                } == true
-                )
+                selected = currentRoute == route
+            )
         }
     }
 }
