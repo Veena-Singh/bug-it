@@ -1,4 +1,4 @@
-package com.example.bugit.util
+package com.example.bugit.common.util
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp

@@ -1,4 +1,4 @@
-package com.example.bugit.uistate
+package com.example.bugit.view.uistate
 
 import com.example.bugit.model.GoogleSheetData
 

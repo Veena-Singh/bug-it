@@ -1,4 +1,4 @@
-package com.example.bugit.view
+package com.example.bugit.view.screen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,7 +32,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.bugit.R
-import com.example.bugit.util.Constant
+import com.example.bugit.common.util.Constant
 import com.example.bugit.viewmodel.BugListViewModel
 
 @Composable
@@ -58,8 +58,8 @@ fun BugsListScreen(paddingModifier: Modifier, navController: NavHostController) 
                 contentPadding = PaddingValues(Constant.PADDING_16)
             ) {
                 items(uiState.value.bugList) { item ->
-                    val sheetName = item.sheetName
-                    item.sheetData.forEach {
+                    val sheetName = item.googleSheetName
+                    item.googleSheetData.forEach {
                         BugCard(
                             description = it[0].toString(),
                             date = sheetName,

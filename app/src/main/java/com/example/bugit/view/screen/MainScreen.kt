@@ -1,4 +1,4 @@
-package com.example.bugit.view
+package com.example.bugit.view.screen
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -16,10 +16,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.bugit.navigation.AppBottomBar
-import com.example.bugit.navigation.BottomNavigationGraph
-import com.example.bugit.util.Constant
-import com.example.bugit.util.Constant.NULL
+import com.example.bugit.common.navigation.AppBottomBar
+import com.example.bugit.common.navigation.BottomNavigationGraph
+import com.example.bugit.common.util.Constant
+import com.example.bugit.common.util.Constant.NULL
 import com.example.bugit.viewmodel.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)

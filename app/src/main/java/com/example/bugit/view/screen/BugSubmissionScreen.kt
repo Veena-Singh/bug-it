@@ -1,9 +1,7 @@
-package com.example.bugit.view
+package com.example.bugit.view.screen
 
 import android.net.Uri
 import android.util.Log
-import androidx.activity.compose.BackHandler
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Edit
@@ -45,17 +42,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.bugit.R
-import com.example.bugit.navigation.BottomBar
-import com.example.bugit.uistate.BugSubmissionScreenUiState
-import com.example.bugit.util.Constant
+import com.example.bugit.view.uistate.BugSubmissionScreenUiState
+import com.example.bugit.common.util.Constant
+import com.example.bugit.view.dialog.Alert
 import com.example.bugit.viewmodel.BugSubmissionViewModel
 
 @Composable
@@ -143,30 +137,7 @@ fun BugSubmissionScreen(
                 if (uiState.value.showFailureDialog) Constant.ERROR_TITLE else Constant.SUCCESS_TITLE
             val message =
                 if (uiState.value.showFailureDialog) Constant.ERROR_MESSAGE else Constant.SUCCESS_MESSAGE
-            AlertDialog(
-                onDismissRequest = {
-                    bugSubmissionViewModel.handleDialog()
-                },
-                title = {
-                    Text(
-                        text = title,
-                        style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                    )
-                },
-                text = { Text(text = message, style = TextStyle(fontSize = 15.sp)) },
-                confirmButton = {
-                    Button(
-                        onClick = {
-                            bugSubmissionViewModel.handleDialog()
-                            if (uiState.value.showSuccessDialog) {
-                                navController.navigate(BottomBar.BugsList.route)
-                            }
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
-                    ) {
-                        Text("OK")
-                    }
-                })
+            Alert(title, message, bugSubmissionViewModel, uiState, navController)
         }
     }
 }

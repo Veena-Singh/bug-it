@@ -1,7 +1,7 @@
 package com.example.bugit.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.example.bugit.uistate.MainUiState
+import com.example.bugit.view.uistate.MainUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -1,15 +1,13 @@
-package com.example.bugit.navigation
+package com.example.bugit.common.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import com.example.bugit.view.BugSubmissionScreen
-import com.example.bugit.view.BugsListScreen
-import com.example.bugit.view.HomeScreen
+import com.example.bugit.view.screen.BugSubmissionScreen
+import com.example.bugit.view.screen.BugsListScreen
+import com.example.bugit.view.screen.HomeScreen
 import com.example.bugit.viewmodel.MainViewModel
 
 @Composable

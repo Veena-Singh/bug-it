@@ -1,6 +1,6 @@
 package com.example.bugit.model
 
 data class GoogleSheetData(
-    val sheetName: String,
-    val sheetData: List<MutableList<Any>>
+    val googleSheetName: String,
+    val googleSheetData: List<MutableList<Any>>
     )

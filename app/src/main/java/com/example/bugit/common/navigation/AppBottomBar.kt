@@ -1,4 +1,4 @@
-package com.example.bugit.navigation
+package com.example.bugit.common.navigation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
@@ -14,11 +14,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.bugit.util.Constant
-import com.example.bugit.util.Constant.HOME_ROUTE
-import com.example.bugit.util.Constant.NULL
-import com.example.bugit.util.Constant.SUBMIT_BUG_ROUTE
-import com.example.bugit.util.Constant.SUBMIT_BUG_ROUTE_PARAMS
+import com.example.bugit.common.util.Constant
+import com.example.bugit.common.util.Constant.HOME_ROUTE
+import com.example.bugit.common.util.Constant.NULL
 import com.example.bugit.viewmodel.MainViewModel
 
 @Composable

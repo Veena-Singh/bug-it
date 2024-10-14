@@ -1,4 +1,4 @@
-package com.example.bugit.uistate
+package com.example.bugit.view.uistate
 
 data class BugSubmissionScreenUiState(
     val loading: Boolean = false,

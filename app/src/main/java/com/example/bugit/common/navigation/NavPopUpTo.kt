@@ -1,4 +1,4 @@
-package com.example.bugit.navigation
+package com.example.bugit.common.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavOptionsBuilder

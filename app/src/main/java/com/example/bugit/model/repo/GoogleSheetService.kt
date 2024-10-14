@@ -1,4 +1,4 @@
-package com.example.bugit.repo
+package com.example.bugit.model.repo
 
 import android.accounts.AccountManager
 import android.content.Context
@@ -16,7 +16,7 @@ object GoogleSheetService {
     private const val applicationName = "Bug It"
     const val googleSheetId: String = "1KaQkJ0KhXRza6bErF-yqW4qknddyDfwM-9D_EVC2tMI"
 
-    fun getSheetsService(context: Context): Sheets {
+    fun getGoogleSheetsService(context: Context): Sheets {
         val httpTransport = com.google.api.client.http.javanet.NetHttpTransport()
         val jsonFactory = JacksonFactory.getDefaultInstance()
         val inputStream: InputStream = context.resources.openRawResource(R.raw.credentials)

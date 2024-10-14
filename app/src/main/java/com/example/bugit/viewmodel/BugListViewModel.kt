@@ -3,11 +3,8 @@ package com.example.bugit.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.bugit.model.GoogleSheetData
-import com.example.bugit.repo.GoogleSheetService
-import com.example.bugit.uistate.BugListScreenUiState
-import com.google.api.services.sheets.v4.model.Spreadsheet
-import com.google.api.services.sheets.v4.model.ValueRange
+import com.example.bugit.model.repo.apiservice.GoogleApiService.getAllBugs
+import com.example.bugit.view.uistate.BugListScreenUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,12 +21,7 @@ class BugListViewModel: ViewModel()  {
         viewModelScope.launch(Dispatchers.IO) {
             handleLoading(true)
             try {
-                val sheetNames = getSheetNames(context)
-                val listOfBugs = mutableListOf<GoogleSheetData>()
-                sheetNames.forEach { sheetName ->
-                    val sheetData = getSheetData(sheetName, context)
-                    listOfBugs.add(sheetData)
-                }
+                val listOfBugs = getAllBugs(context)
                 _uiState.update { currentState ->
                     currentState.copy(
                         bugList = listOfBugs,
@@ -48,18 +40,5 @@ class BugListViewModel: ViewModel()  {
                 loading = isLoading
             )
         }
-    }
-
-    // Get all created tabs/sheet names
-    private fun getSheetNames(context: Context): List<String> {
-        val spreadsheet: Spreadsheet = GoogleSheetService.getSheetsService(context).spreadsheets().get(GoogleSheetService.googleSheetId).execute()
-        return spreadsheet.sheets.map { it.properties.title }
-    }
-
-    // Get all list of bugs
-    private fun getSheetData(sheetName: String, context: Context): GoogleSheetData {
-        val response: ValueRange = GoogleSheetService.getSheetsService(context).spreadsheets().values().get(GoogleSheetService.googleSheetId, sheetName).execute()
-        val data = response.getValues() ?: listOf()
-        return GoogleSheetData(sheetName, data)
     }
 }

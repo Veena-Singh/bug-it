@@ -1,4 +1,4 @@
-package com.example.bugit.ui.theme
+package com.example.bugit.common.theme
 
 import android.app.Activity
 import android.os.Build

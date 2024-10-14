@@ -1,4 +1,4 @@
-package com.example.bugit.view
+package com.example.bugit.view.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -22,10 +22,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.bugit.R
-import com.example.bugit.navigation.BottomBar
-import com.example.bugit.navigation.defaultNavOptions
-import com.example.bugit.util.Constant
-import com.example.bugit.util.Constant.NULL
+import com.example.bugit.common.navigation.BottomBar
+import com.example.bugit.common.navigation.defaultNavOptions
+import com.example.bugit.common.util.Constant
+import com.example.bugit.common.util.Constant.NULL
 import com.example.bugit.viewmodel.MainViewModel
 
 @Composable

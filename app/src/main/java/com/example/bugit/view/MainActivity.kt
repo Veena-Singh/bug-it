@@ -1,4 +1,4 @@
-package com.example.bugit
+package com.example.bugit.view
 
 import android.content.Intent
 import android.net.Uri
@@ -13,10 +13,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.bugit.ui.theme.BugItTheme
-import com.example.bugit.view.MainScreen
+import com.example.bugit.common.theme.BugItTheme
+import com.example.bugit.view.screen.MainScreen
 
 class MainActivity : ComponentActivity() {
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Get the image from intent

@@ -1,8 +1,8 @@
-package com.example.bugit.navigation
+package com.example.bugit.common.navigation
 
 import com.example.bugit.R
-import com.example.bugit.util.Constant
-import com.example.bugit.util.Constant.SUBMIT_BUG_ROUTE
+import com.example.bugit.common.util.Constant
+import com.example.bugit.common.util.Constant.SUBMIT_BUG_ROUTE
 
 sealed class BottomBar(
     val route: String,
