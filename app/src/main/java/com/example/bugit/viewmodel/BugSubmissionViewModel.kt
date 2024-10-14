@@ -2,11 +2,11 @@ package com.example.bugit.viewmodel
 
 import android.content.Context
 import android.net.Uri
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bugit.common.util.DateUtils
-import com.example.bugit.model.repo.apiservice.GoogleApiService
-import com.example.bugit.model.repo.GoogleSheetService
-import com.example.bugit.model.repo.apiservice.FirebaseApiService
+import com.example.bugit.model.repo.GoogleApiService
+import com.example.bugit.model.repo.FirebaseApiService
 import com.example.bugit.view.uistate.BugSubmissionScreenUiState
 import com.google.api.services.sheets.v4.model.ValueRange
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class BugSubmissionViewModel: MainViewModel()  {
+class BugSubmissionViewModel: ViewModel()  {
 
     private val _uiState = MutableStateFlow(BugSubmissionScreenUiState())
     val uiState: StateFlow<BugSubmissionScreenUiState> = _uiState.asStateFlow()
@@ -91,10 +91,9 @@ class BugSubmissionViewModel: MainViewModel()  {
             val values = listOf(
                 listOf(bugDescription, bugImageUrl)
             )
-            val sheetsService = GoogleSheetService.getGoogleSheetsService(context)
             val bugData = ValueRange().setValues(values)
             val currentDate = DateUtils.getCurrentDate()
-            val result = GoogleApiService.saveBugDataInGoogleSheet(sheetsService, currentDate, bugData)
+            val result = GoogleApiService.saveBugDataInGoogleSheet(context, currentDate, bugData)
             if (result != null) {
                 handleLoading(false)
                 handleDialog(showSuccessDialog = true, showFailureDialog = false)

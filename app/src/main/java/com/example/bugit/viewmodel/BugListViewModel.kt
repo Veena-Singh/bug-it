@@ -3,7 +3,7 @@ package com.example.bugit.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.bugit.model.repo.apiservice.GoogleApiService.getAllBugs
+import com.example.bugit.model.repo.GoogleApiService.getAllBugs
 import com.example.bugit.view.uistate.BugListScreenUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

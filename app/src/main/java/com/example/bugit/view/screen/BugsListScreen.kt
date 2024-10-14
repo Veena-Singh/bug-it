@@ -29,14 +29,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.bugit.R
 import com.example.bugit.common.util.Constant
 import com.example.bugit.viewmodel.BugListViewModel
 
 @Composable
-fun BugsListScreen(paddingModifier: Modifier, navController: NavHostController) {
+fun BugsListScreen(paddingModifier: Modifier) {
 
     val bugListViewModel: BugListViewModel = viewModel()
     val uiState = bugListViewModel.uiState.collectAsStateWithLifecycle()
@@ -98,27 +97,31 @@ fun BugCard(description: String, date: String, image: String) {
                 placeholder = painterResource(id = R.drawable.placeholder),
             )
             Column(Modifier.padding(Constant.PADDING_8)) {
-                Text(
-                    text = Constant.LIST_TITLE_DESCRIPTION,
-                    style = TextStyle(fontWeight = FontWeight.Bold)
-                )
-                Text(
-                    text = description,
-                )
+                BoldText(title = Constant.LIST_TITLE_DESCRIPTION)
+                SmallText(title = description)
                 Divider(
                     modifier = Modifier.padding(
                         top = Constant.PADDING_10,
                         bottom = Constant.PADDING_10
                     )
                 )
-                Text(
-                    text = Constant.LIST_TITLE_DATE,
-                    style = TextStyle(fontWeight = FontWeight.Bold)
-                )
-                Text(
-                    text = date,
-                )
-            }
+                BoldText(title = Constant.LIST_TITLE_DATE)
+                SmallText(title = date)            }
         }
     }
+}
+
+@Composable
+private fun BoldText(title: String) {
+    Text(
+        text = title,
+        style = TextStyle(fontWeight = FontWeight.Bold)
+    )
+}
+
+@Composable
+private fun SmallText(title: String) {
+    Text(
+        text = title
+    )
 }

@@ -1,4 +1,4 @@
-package com.example.bugit.model.repo.apiservice
+package com.example.bugit.model.repo
 
 import android.net.Uri
 import android.util.Log

@@ -38,7 +38,6 @@ object Constant {
 
     // Common
     const val NULL = "null"
-    const val NULL_WITH_SPACE = "null "
     const val SUBMIT_BUG_ROUTE_PARAMS = "submitBug/{imageUri}"
 
     //View Paddings
@@ -59,5 +58,11 @@ object Constant {
     val FONT_20 = 20.sp
     val FONT_15 = 15.sp
     val FONT_10 = 10.sp
+
+    // Google sheet api service data
+    const val range = "!A1"
+    const val valueInputOption = "RAW"
+    const val applicationName = "Bug It"
+    const val googleSheetId: String = "1KaQkJ0KhXRza6bErF-yqW4qknddyDfwM-9D_EVC2tMI"
 
 }
