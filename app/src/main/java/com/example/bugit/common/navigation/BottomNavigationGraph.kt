@@ -30,7 +30,7 @@ fun BottomNavigationGraph(
             BugSubmissionScreen(paddingModifier, navController, imageUri.toString())
         }
         composable(route= BottomBar.BugsList.route) {
-            BugsListScreen(paddingModifier, navController)
+            BugsListScreen(paddingModifier)
         }
     }
 }
