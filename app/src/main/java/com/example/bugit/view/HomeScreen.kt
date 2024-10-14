@@ -23,6 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.bugit.R
 import com.example.bugit.navigation.BottomBar
+import com.example.bugit.navigation.defaultNavOptions
 import com.example.bugit.util.Constant
 import com.example.bugit.util.Constant.NULL
 import com.example.bugit.viewmodel.MainViewModel
@@ -38,11 +39,7 @@ fun HomeScreen(
     LaunchedEffect(uiState.value.imageUri) {
         if (uiState.value.imageUri != NULL) {
             navController.navigate(BottomBar.BugSubmission.createRoute(imageUri = uiState.value.imageUri)) {
-                popUpTo(navController.graph.startDestinationId) {
-                    saveState = true
-                }
-                launchSingleTop = true
-                restoreState = true
+                defaultNavOptions(navController)
             }
             viewModel.setImageUri(NULL)
         }
@@ -94,11 +91,7 @@ fun HomeScreen(
             Button(
                 onClick = {
                     navController.navigate(BottomBar.BugSubmission.createRoute(imageUri = NULL)){
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
+                        defaultNavOptions(navController)
                     }
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Blue),

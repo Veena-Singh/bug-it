@@ -34,16 +34,12 @@ fun AppBottomBar(
     BottomNavigation() {
         val currentRoute = currentRoute(navController)
         screens.forEach { screen ->
-            var route = screen.route
-            if (route == SUBMIT_BUG_ROUTE) {
-                route = SUBMIT_BUG_ROUTE_PARAMS
-            }
             BottomNavigationItem(
                 icon = {
                     Image(
                         painter = painterResource(id = screen.icon), contentDescription = null,
                         modifier = Modifier.size(Constant.PADDING_20),
-                        colorFilter = if (currentRoute == route) ColorFilter.tint(Color.White) else ColorFilter.tint(
+                        colorFilter = if (currentRoute == screen.route) ColorFilter.tint(Color.White) else ColorFilter.tint(
                             Color.LightGray
                         )
                     )
@@ -54,29 +50,21 @@ fun AppBottomBar(
                          BottomBar.BugSubmission.route -> {
                             navController.navigate(BottomBar.BugSubmission.createRoute(imageUri = NULL))
                             {
-                                popUpTo(navController.graph.startDestinationId) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
+                                defaultNavOptions(navController)
                             }
                         }
                         else  -> {
-                            if (route == HOME_ROUTE) {
+                            if (screen.route == HOME_ROUTE) {
                                 mainViewModel.setImageUri(NULL)
                             }
-                            navController.navigate(route)
+                            navController.navigate(screen.route)
                             {
-                                popUpTo(navController.graph.startDestinationId) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
+                                defaultNavOptions(navController)
                             }
                         }
                     }
                 },
-                selected = currentRoute == route
+                selected = currentRoute == screen.route
             )
         }
     }

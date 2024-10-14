@@ -124,7 +124,7 @@ fun BugSubmissionScreen(
                 contentAlignment = Alignment.Center
             ) {
                 if (uiState.value.loading) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(color = Color.Blue)
                 }
                 Button(
                     onClick = {

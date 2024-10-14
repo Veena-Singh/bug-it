@@ -1,7 +1,5 @@
 package com.example.bugit.view
 
-import androidx.activity.compose.BackHandler
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -50,7 +48,10 @@ fun BugsListScreen(paddingModifier: Modifier, navController: NavHostController) 
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (uiState.value.loading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center),
+                color = Color.Blue
+            )
         } else {
             LazyColumn(
                 modifier = paddingModifier.fillMaxWidth(),
